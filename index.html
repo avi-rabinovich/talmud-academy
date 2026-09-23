@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#185c4b">
+  <title>Talmud Academy · Word Quest</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="study.css">
+  <link rel="stylesheet" href="parsing.css">
+  <link rel="stylesheet" href="roadmap.css">
+  <script src="questions.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="study.js" defer></script>
+  <script src="parsing-next.js" defer></script>
+  <script src="parsing-third.js" defer></script>
+  <script src="parsing.js" defer></script>
+  <script src="roadmap.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Talmud Academy home"><span class="brand-icon" aria-hidden="true">ת</span><span>Talmud<span class="brand-light">Academy</span><small>A LITTLE LEARNING. A BIG DISCOVERY.</small></span></a>
+    <span class="header-tag"><span class="online-dot"></span> YOUR LEARNING ADVENTURE</span>
+  </header>
+  <main>
+    <div class="breadcrumb">THE BEIT MIDRASH <span>/</span> BERACHOT <span>/</span> CHAPTER 4</div>
+    <section class="hero" aria-labelledby="page-title">
+      <div><div class="eyebrow">✦ WORD QUEST · 01</div><h1 id="page-title">Big ideas start<br>with <span>little words.</span></h1><p>Crack the words. Follow the discussion.<br>Discover how the Gemara thinks.</p><div class="hero-tags"><span>Berachot 26a</span><span>11 questions</span><span>+10 points per correct answer</span></div></div>
+      <div class="hero-art" aria-hidden="true"><div class="orbit"></div><span class="spark spark-one">✦</span><span class="spark spark-two">✧</span><div class="floating-label label-question">? A QUESTION</div><div class="book"><div class="book-page"><span>א</span><i></i><i></i><i></i></div><div class="book-page"><span>ב</span><i></i><i></i><i></i></div></div><div class="floating-label label-discovery">✦ A DISCOVERY!</div></div>
+    </section>
+    <nav class="lesson-nav" aria-label="Lesson activities">
+      <button id="roadmap-nav" aria-pressed="false" aria-controls="roadmap-panel">My learning path</button>
+      <button id="study-nav" aria-pressed="true" aria-controls="study-panel"><span>01</span> Study the words</button>
+      <button id="quiz-nav" aria-pressed="false" aria-controls="quiz-panel"><span>02</span> Take the quiz</button>
+      <button id="parse-nav" aria-pressed="false" aria-controls="parse-panel"><span>03</span> Parse the daf</button>
+      <p>Learn first. Then put your discoveries to work.</p>
+    </nav>
+    <section id="study-panel" aria-labelledby="study-title"></section>
+    <section id="roadmap-panel" aria-labelledby="roadmap-title" hidden></section>
+    <section id="parse-panel" aria-labelledby="parse-title" hidden></section>
+    <section id="quiz-panel" aria-label="Word quest quiz" hidden>
+    <section class="quest-bar" aria-label="Quiz progress"><div class="quest-label"><span class="path-icon" aria-hidden="true">⚑</span><div><strong id="progress-label">Your first word quest</strong><small id="progress-detail">Every word is a step forward.</small></div></div><div class="progress-track" id="progress-track" role="progressbar" aria-label="Questions completed" aria-valuemin="0" aria-valuemax="11" aria-valuenow="0"><div id="progress-fill"></div></div><div class="score-pill"><span aria-hidden="true">✦</span><strong id="score">0</strong><span>PTS</span></div></section>
+    <div class="workspace">
+      <section class="quiz-card" id="quiz-card" aria-labelledby="question-title">
+        <div class="question-meta"><span id="question-number">QUESTION 01 / 11</span><span class="topic-pill" id="question-type">DISCUSSION SIGNAL</span></div>
+        <div id="question-view"><div class="term" id="term" lang="he" dir="rtl"></div><h2 id="question-title" tabindex="-1"></h2><p class="question-hint">Pick the meaning that fits our passage.</p><div class="answers" id="answers"></div><div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div><div class="quiz-footer"><span id="footer-hint">A little thinking goes a long way.</span><button class="primary-button" id="next-button" disabled>Check answer <span aria-hidden="true">→</span></button></div></div>
+        <div id="result-view" hidden></div>
+      </section>
+      <aside class="source-column">
+        <section class="passage-card"><div class="source-heading"><span class="eyebrow">YOUR SOURCE SHEET</span><span aria-hidden="true">▤</span></div><h2>Let’s open the Gemara.</h2><p class="source-subtitle">Berachot 26a · תפילת השחר</p><div class="passage" lang="he" dir="rtl"><p><mark data-term="ורמינהו">ורמינהו</mark>: מצותה עם <span data-term="הנץ החמה">הנץ החמה</span>, <span data-term="כדי">כדי</span> <span data-term="שיסמוך">שיסמוך</span> גאולה לתפלה, ונמצא מתפלל <span data-term="ביום">ביום</span>!</p><p><span data-term="כי תניא ההיא">כי תניא ההיא</span> — לותיקין.</p><p><span data-term="דאמר">דאמר</span> רבי יוחנן: <span data-term="ותיקין">ותיקין</span> <span data-term="היו גומרים">היו גומרים</span> אותה עם הנץ החמה.</p></div><p class="source-note"><span aria-hidden="true">↗</span> Your word is highlighted in the passage.</p><details><summary>A little context before you start</summary><p>The Mishnah allows the morning Amidah until midday; Rabbi Yehudah says until four hours into the day. Here the Gemara brings a teaching about sunrise. How do the teachings fit together?</p><p>The teaching discusses finishing Shema and its blessings just before the Amidah. מצותה refers to Shema.</p></details><a class="source-link" href="https://www.sefaria.org/Berakhot.26a" target="_blank" rel="noopener noreferrer">Read the full page on Sefaria ↗</a></section>
+        <section class="tip-card"><span class="tip-icon" aria-hidden="true">✧</span><div><h3>Think like a word detective.</h3><p>Some words tell us what’s happening. Others tell us where the discussion goes next. Look out for both!</p></div></section>
+      </aside>
+    </div>
+    </section>
+    <div id="roadmap-continue" hidden></div>
+    <div class="bottom-note"><span aria-hidden="true">✦</span> No rush. No lost points. Just one discovery at a time.</div>
+  </main>
+  <footer class="site-footer"><span>TALMUD ACADEMY</span><span>Small steps. Deeper understanding.</span><span>BERACHOT · CHAPTER 4</span></footer>
+</body>
+</html>

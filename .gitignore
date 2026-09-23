@@ -1,0 +1,6 @@
+.test-tools/
+__pycache__/
+test-artifacts/
+release/
+sites-plugin.tar.gz
+.hosting-tools/
