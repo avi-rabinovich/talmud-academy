@@ -56,4 +56,6 @@ Word boxes use coordinates on the original 1024 × 1549 image, and scale with it
 
 ## Static hosting package
 
-Run `python scripts/package_static.py` to create `release/talmud-academy.zip`. It contains only the 13 public assets, with `index.html` at the archive root. No server or runtime dependencies are needed. Serve over HTTPS with a static web host. The package excludes testing tools, screenshots, scripts, and source notes. Public deployment has not yet been completed.
+Run `python scripts/package_static.py` to create `release/talmud-academy.zip`. It contains only the 13 public assets, with `index.html` at the archive root. No server or runtime dependencies are needed. The package excludes testing tools, screenshots, scripts, and source notes.
+
+GitHub Pages publishes this package automatically on pushes to `main`, using `.github/workflows/pages.yml`. The repository's Pages source must be set to **GitHub Actions**. The workflow can also be run manually from the Actions tab. Relative asset paths support the repository's `/talmud-academy/` URL prefix.
