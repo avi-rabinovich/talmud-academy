@@ -1,5 +1,7 @@
 # Talmud Academy
 
+The chapter-4 material on Berachot 26a now has four vocabulary quizzes: the original 11-question opening quiz plus **After midday** (19), **A missed Minchah** (24), and **Mistake, answer, and proof** (19). The 62 added questions include study lists, source passages, signal meanings and functions, explanations, and practice rounds. Use **More word quizzes** or the roadmap. The expanded roadmap has eight activities and 820 available points. Existing five-activity progress is preserved. See `content/berachot-26a-word-coverage.md` for coverage, and run `python scripts/test_words.py` for the added browser checks.
+
 Educational Talmud content for children around age 11 beginning Gemara, with some prior Mishnah learning.
 
 ## Initial scope
@@ -28,7 +30,7 @@ Open `index.html` in a browser. No build step or app dependencies are needed. Al
 
 The interface includes 11 questions, 10 points per correct answer, explanations, a highlighted source passage, progress, and practice for missed answers. Each question can earn points once per quest, including practice; the maximum is 110. Starting a new quest resets that attempt, while the roadmap retains the best score. Progress saves in this browser across reloads.
 
-The site opens on **My learning path**, a five-activity roadmap: study, vocabulary, and three daf-parsing quizzes. It recommends the first incomplete activity and permits revisiting any activity. Study completion is self-reported using “I’ve studied — start the quiz”; finishing a vocabulary round completes its activity even if further practice is needed; parsing activities require every boundary to be correct. Best scores total 200 points and cannot be inflated by replaying. The roadmap and resumable activity state use versioned localStorage, with validation and graceful fallback when storage is unavailable. Progress does not sync between browsers or domains, and clearing site data removes it.
+The site opens on **My learning path**, an eight-activity roadmap: study, four vocabulary quizzes, and three daf-parsing quizzes. It recommends the first incomplete activity and permits revisiting any activity. Study completion is self-reported using “I’ve studied — start the quiz”; finishing a vocabulary round completes its activity even if further practice is needed; parsing activities require every boundary to be correct. Best scores total 820 points and cannot be inflated by replaying. The roadmap and resumable activity state use versioned localStorage, with validation and graceful fallback when storage is unavailable. Progress does not sync between browsers or domains, and clearing site data removes it.
 
 **Study the words** is a printable sheet with 16 vocabulary entries, an objection → answer → support guide, and self-check prompts. Students can cover all meanings and reveal individual definitions. Link directly to `index.html#study`, `index.html#quiz`, or `index.html#roadmap`. Study content lives in `study.js`; it remains an editorial draft for educator review.
 
@@ -56,6 +58,6 @@ Word boxes use coordinates on the original 1024 × 1549 image, and scale with it
 
 ## Static hosting package
 
-Run `python scripts/package_static.py` to create `release/talmud-academy.zip`. It contains only the 13 public assets, with `index.html` at the archive root. No server or runtime dependencies are needed. The package excludes testing tools, screenshots, scripts, and source notes.
+Run `python scripts/package_static.py` to create `release/talmud-academy.zip`. It contains only the 15 public assets, with `index.html` at the archive root. No server or runtime dependencies are needed. The package excludes testing tools, screenshots, scripts, and source notes.
 
 GitHub Pages publishes this package automatically on pushes to `main`, using `.github/workflows/pages.yml`. The repository's Pages source must be set to **GitHub Actions**. The workflow can also be run manually from the Actions tab. Relative asset paths support the repository's `/talmud-academy/` URL prefix.

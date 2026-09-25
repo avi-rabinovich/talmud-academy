@@ -5,7 +5,7 @@ import zipfile
 root = Path(__file__).resolve().parents[1]
 files = ['index.html','styles.css','study.css','parsing.css','roadmap.css',
          'questions.js','app.js','study.js','parsing-next.js','parsing-third.js',
-         'parsing.js','roadmap.js','assets/berachot-26a.jpg']
+         'parsing.js','roadmap.js','vocabulary-rest.js','word-quizzes.js','assets/berachot-26a.jpg']
 output = root / 'release'
 output.mkdir(exist_ok=True)
 with zipfile.ZipFile(output / 'talmud-academy.zip', 'w', zipfile.ZIP_DEFLATED) as archive:

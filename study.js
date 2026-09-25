@@ -69,6 +69,8 @@ document.getElementById('toggle-meanings').onclick = (event) => {
 };
 
 function showActivity(activity, focus = true) {
+  document.getElementById('words-panel').hidden = activity !== 'words';
+  document.getElementById('words-nav').setAttribute('aria-pressed',String(activity === 'words'));
   document.getElementById('roadmap-panel').hidden = activity !== 'roadmap';
   document.getElementById('roadmap-nav').setAttribute('aria-pressed', String(activity === 'roadmap'));
   const study = activity === 'study';
@@ -80,7 +82,7 @@ function showActivity(activity, focus = true) {
   document.getElementById('parse-nav').setAttribute('aria-pressed', String(activity === 'parse'));
   document.getElementById('quiz-nav').lastChild.textContent = checked || position > 0 ? ' Return to quiz' : ' Take the quiz';
   if (focus) {
-    const target = activity === 'roadmap' ? 'roadmap-title' : study ? 'study-title' : activity === 'parse' ? 'parse-title' : document.getElementById('question-view').hidden ? 'result-title' : 'question-title';
+    const target = activity === 'words' ? 'words-title' : activity === 'roadmap' ? 'roadmap-title' : study ? 'study-title' : activity === 'parse' ? 'parse-title' : document.getElementById('question-view').hidden ? 'result-title' : 'question-title';
     document.getElementById(target)?.focus();
   }
 }
@@ -91,9 +93,10 @@ function navigateActivity(activity) {
 document.getElementById('study-nav').onclick = () => navigateActivity('study');
 document.getElementById('roadmap-nav').onclick = () => navigateActivity('roadmap');
 document.getElementById('quiz-nav').onclick = () => navigateActivity('quiz');
+document.getElementById('words-nav').onclick = () => navigateActivity('words');
 document.getElementById('parse-nav').onclick = () => navigateActivity('parse');
 document.getElementById('start-quiz').onclick = () => navigateActivity('quiz');
 document.getElementById('print-study').onclick = () => window.print();
-const activityFromHash = () => ['#quiz','#parse','#study'].includes(location.hash) ? location.hash.slice(1) : 'roadmap';
+const activityFromHash = () => ['#quiz','#parse','#study','#words'].includes(location.hash) ? location.hash.slice(1) : 'roadmap';
 window.addEventListener('hashchange', () => showActivity(activityFromHash()));
 showActivity(activityFromHash(), false);

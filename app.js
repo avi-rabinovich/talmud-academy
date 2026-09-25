@@ -23,7 +23,7 @@ function renderQuestion(focus = false) {
   $('question-type').textContent = signalQuestions.has(index) ? 'DISCUSSION SIGNAL' : 'WORD DISCOVERY';
   $('term').textContent = terms[index];
   $('question-title').textContent = question.prompt;
-  document.querySelector('.question-hint').textContent = [6,9].includes(index) ? 'What is happening in the discussion here?' : 'Pick the meaning that fits our passage.';
+  $('question-view').querySelector('.question-hint').textContent = [6,9].includes(index) ? 'What is happening in the discussion here?' : 'Pick the meaning that fits our passage.';
   $('answers').replaceChildren();
   question.options.forEach((option, optionIndex) => {
     const button = document.createElement('button');
@@ -107,7 +107,7 @@ function showResults() {
   $('question-number').textContent = 'QUEST COMPLETE';
   $('question-type').textContent = missed.length ? 'KEEP DISCOVERING' : 'WORDS UNLOCKED';
   $('result-view').innerHTML = `<div class="results"><div class="result-icon" aria-hidden="true">✦</div><h2 id="result-title" tabindex="-1">${missed.length ? 'A little wiser. A little further.' : 'Word quest complete!'}</h2><p>You followed the clues and explored the Gemara.</p><div class="result-score">${earned.size * 10} <small>/ 110 points</small></div><p class="result-summary">First round: ${firstScore} of ${QUESTIONS.length} correct.<br>${practice ? `With practice: ${earned.size} of ${QUESTIONS.length} words unlocked.` : 'Every correct answer earned you 10 points.'}</p><p>${missed.length ? `${missed.length} ${missed.length === 1 ? 'question is' : 'questions are'} ready for another look.<br>Practise them to earn the remaining points!` : 'You spotted the words that help a discussion move.<br>That’s a great beginning.'}</p><div class="result-actions"></div></div>`;
-  const actions = document.querySelector('.result-actions');
+  const actions = $('result-view').querySelector('.result-actions');
   if (missed.length) {
     const retry = document.createElement('button');
     retry.className = 'primary-button';

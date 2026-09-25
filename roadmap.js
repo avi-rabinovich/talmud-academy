@@ -7,7 +7,11 @@ const LEARNING_PATH = [
   {title:'Follow two more exchanges',kind:'DAF DETECTIVE · QUIZ 2',description:'After midday and a missed Minchah: find four stopping places.',activity:'parse',quiz:1,max:40},
   {title:'Spot the supporting clue',kind:'DAF DETECTIVE · QUIZ 3',description:'Separate the objection, answer, and Rav Ashi’s support.',activity:'parse',quiz:2,max:30}
 ];
-let journey = {completed:[false,false,false,false,false],best:[0,0,0,0,0]};
+WORD_LESSONS.forEach((lesson,i)=>LEARNING_PATH.push({title:`Words: ${lesson.title}`,kind:`VOCABULARY · ${lesson.questions.length} QUESTIONS`,description:lesson.intro,activity:'words',quiz:i,max:lesson.questions.length*10}));
+// Keep original progress indices stable while placing new vocabulary before its parsing exercise.
+const PATH_ORDER=[0,1,2,5,6,3,7,4];
+const PATH_MAX=LEARNING_PATH.reduce((total,step)=>total+step.max,0);
+let journey = {completed:LEARNING_PATH.map(()=>false),best:LEARNING_PATH.map(()=>0)};
 let storageAvailable = true;
 let restoringProgress = true;
 const validIndices = (values, max) => Array.isArray(values) && values.every(v => Number.isInteger(v) && v >= 0 && v < max) && new Set(values).size === values.length;
@@ -30,8 +34,10 @@ function restoreProgress() {
   try {
     const s = JSON.parse(localStorage.getItem(PROGRESS_KEY) || 'null');
     if (!s || s.version !== 1) return;
-    if (Array.isArray(s.completed) && s.completed.length === 5 && s.completed.every(x => typeof x === 'boolean')) journey.completed = s.completed;
-    if (Array.isArray(s.best) && s.best.length === 5 && s.best.every((x,i) => Number.isInteger(x) && x >= 0 && x <= LEARNING_PATH[i].max)) journey.best = s.best;
+    if (Array.isArray(s.completed) && [5,LEARNING_PATH.length].includes(s.completed.length) && s.completed.every(x => typeof x === 'boolean')) s.completed.forEach((value,i)=>journey.completed[i]=value);
+    if (Array.isArray(s.best) && [5,LEARNING_PATH.length].includes(s.best.length) && s.best.every((x,i) => Number.isInteger(x) && x >= 0 && x <= LEARNING_PATH[i].max)) s.best.forEach((value,i)=>journey.best[i]=value);
+    if(Array.isArray(s.words))s.words.forEach((value,i)=>{if(i<WORD_LESSONS.length&&validWordState(value,i))wordStates[i]=value;});
+    selectWordLesson(Number.isInteger(s.wordActive)&&s.wordActive>=0&&s.wordActive<WORD_LESSONS.length?s.wordActive:0);
     const q = s.quiz;
     if (q && validIndices(q.queue,QUESTIONS.length) && q.queue.length && validIndices(q.earned,QUESTIONS.length) && validIndices(q.missed,QUESTIONS.length) && Number.isInteger(q.position) && q.position >= 0 && q.position <= q.queue.length && (q.selected === null || Number.isInteger(q.selected) && q.selected >= 0 && q.selected <= 3) && typeof q.checked === 'boolean' && typeof q.practice === 'boolean' && (q.firstScore === null || Number.isInteger(q.firstScore) && q.firstScore >= 0 && q.firstScore <= QUESTIONS.length)) {
       queue=q.queue; position=q.position; earned=new Set(q.earned); missed=q.missed; practice=q.practice; firstScore=q.firstScore;
@@ -67,12 +73,14 @@ function recordProgress() {
     journey.best[i+2]=Math.max(journey.best[i+2],s.locked.length*10);
     if (s.locked.length === PARSE_QUIZZES[i].steps.length) journey.completed[i+2]=true;
   });
-  const snapshot={version:1,...journey,active:activeParseQuiz,parsing:parsing.map(s=>s ? {step:s.step,start:s.start,end:s.end,locked:s.locked} : null),quiz:{queue,position,selected,checked,earned:[...earned],missed,practice,firstScore}};
+  wordStates.forEach((s,i)=>{journey.best[i+5]=Math.max(journey.best[i+5],s.earned.length*10);if(s.completed)journey.completed[i+5]=true;});
+  const snapshot={version:1,...journey,words:wordStates,wordActive:activeWordLesson,active:activeParseQuiz,parsing:parsing.map(s=>s ? {step:s.step,start:s.start,end:s.end,locked:s.locked} : null),quiz:{queue,position,selected,checked,earned:[...earned],missed,practice,firstScore}};
   try {localStorage.setItem(PROGRESS_KEY,JSON.stringify(snapshot)); storageAvailable=true;} catch {storageAvailable=false;}
   renderRoadmap();
 }
 function openPathStep(index) {
   const step=LEARNING_PATH[index];
+  if(step.activity==='words')selectWordLesson(step.quiz);
   if (step.activity === 'parse' && activeParseQuiz !== step.quiz) {
     parseEl('parse-quiz-choice').value=step.quiz;
     parseEl('parse-quiz-choice').dispatchEvent(new Event('change',{bubbles:true}));
@@ -83,25 +91,28 @@ function openPathStep(index) {
 function renderRoadmap() {
   const panel=document.getElementById('roadmap-panel');
   const count=journey.completed.filter(Boolean).length;
-  const next=journey.completed.findIndex(done=>!done);
-  panel.innerHTML=`<div class="path-heading"><div><div class="eyebrow">YOUR LEARNING PATH · BERACHOT 26a</div><h2 id="roadmap-title" tabindex="-1">One discovery leads to the next.</h2><p>Build your vocabulary. Find the questions. Follow the answers.</p></div><div class="path-points"><strong>${journey.best.reduce((a,b)=>a+b,0)}</strong><span>/ 200 points</span></div></div><div class="path-progress"><strong>${count} of 5 activities complete</strong><progress value="${count}" max="5" aria-label="Activities completed"></progress></div><div class="path-intro"><div><h3>${next < 0 ? 'You completed this learning path!' : 'Your next discovery'}</h3><p>${next < 0 ? 'Revisit any activity to strengthen your skills and improve your score.' : LEARNING_PATH[next].title}</p></div><button id="path-resume" class="primary-button">${next < 0 ? 'Review the words' : count ? 'Continue learning →' : 'Start learning →'}</button></div><ol class="path-list"></ol><p class="path-save">${storageAvailable ? 'Progress saves on this browser. No account needed. Replaying an activity keeps your best score; clearing browser data removes progress.' : 'This browser cannot save progress. You can still learn, but progress will reset when you close or reload the page.'}</p>`;
+  const next=PATH_ORDER.find(i=>!journey.completed[i]) ?? -1;
+  panel.innerHTML=`<div class="path-heading"><div><div class="eyebrow">YOUR LEARNING PATH · BERACHOT 26a</div><h2 id="roadmap-title" tabindex="-1">One discovery leads to the next.</h2><p>Build your vocabulary. Find the questions. Follow the answers.</p></div><div class="path-points"><strong>${journey.best.reduce((a,b)=>a+b,0)}</strong><span>/ ${PATH_MAX} points</span></div></div><div class="path-progress"><strong>${count} of ${LEARNING_PATH.length} activities complete</strong><progress value="${count}" max="${LEARNING_PATH.length}" aria-label="Activities completed"></progress></div><div class="path-intro"><div><h3>${next < 0 ? 'You completed this learning path!' : 'Your next discovery'}</h3><p>${next < 0 ? 'Revisit any activity to strengthen your skills and improve your score.' : LEARNING_PATH[next].title}</p></div><button id="path-resume" class="primary-button">${next < 0 ? 'Review the words' : count ? 'Continue learning →' : 'Start learning →'}</button></div><ol class="path-list"></ol><p class="path-save">${storageAvailable ? 'Progress saves on this browser. No account needed. Replaying an activity keeps your best score; clearing browser data removes progress.' : 'This browser cannot save progress. You can still learn, but progress will reset when you close or reload the page.'}</p>`;
   panel.querySelector('#path-resume').onclick=()=>openPathStep(next < 0 ? 0 : next);
   const list=panel.querySelector('ol');
-  LEARNING_PATH.forEach((step,i)=>{
+  PATH_ORDER.forEach((i,pathIndex)=>{
+    const step=LEARNING_PATH[i];
     const li=document.createElement('li');
     li.className=`path-card ${journey.completed[i]?'done':i===next?'current':''}`;
-    li.innerHTML=`<span class="path-number" aria-label="Step ${i+1}">${journey.completed[i]?'✓':String(i+1).padStart(2,'0')}</span><div class="path-content"><div class="eyebrow">${step.kind}</div><h3>${step.title}</h3><p>${step.description}</p><span class="path-status">${journey.completed[i]?'Completed':i===next?'Up next':'Explore when ready'}${step.max?` · Best: ${journey.best[i]} / ${step.max} points`:''}</span></div><button class="secondary-button">${journey.completed[i]?'Review':'Open'}<span class="visually-hidden"> ${step.title}</span> →</button>`;
+    li.dataset.pathIndex=i;
+    li.innerHTML=`<span class="path-number" aria-label="Step ${pathIndex+1}">${journey.completed[i]?'✓':String(pathIndex+1).padStart(2,'0')}</span><div class="path-content"><div class="eyebrow">${step.kind}</div><h3>${step.title}</h3><p>${step.description}</p><span class="path-status">${journey.completed[i]?'Completed':i===next?'Up next':'Explore when ready'}${step.max?` · Best: ${journey.best[i]} / ${step.max} points`:''}</span></div><button class="secondary-button">${journey.completed[i]?'Review':'Open'}<span class="visually-hidden"> ${step.title}</span> →</button>`;
     li.querySelector('button').onclick=()=>openPathStep(i); list.append(li);
   });
   const continuation=document.getElementById('roadmap-continue');
   const activity=activityFromHash();
-  const index=activity==='study'?0:activity==='quiz'?1:activity==='parse'?activeParseQuiz+2:-1;
+  const index=activity==='study'?0:activity==='quiz'?1:activity==='parse'?activeParseQuiz+2:activity==='words'?activeWordLesson+5:-1;
   continuation.hidden=index<0 || !journey.completed[index];
   continuation.replaceChildren();
   if (!continuation.hidden) {
     const button=document.createElement('button'); button.className='primary-button';
-    button.textContent=index<4?`Next: ${LEARNING_PATH[index+1].title} →`:'See my completed path →';
-    button.onclick=()=>index<4?openPathStep(index+1):navigateActivity('roadmap');
+    const nextIndex=PATH_ORDER[PATH_ORDER.indexOf(index)+1];
+    button.textContent=nextIndex!==undefined?`Next: ${LEARNING_PATH[nextIndex].title} →`:'See my learning path →';
+    button.onclick=()=>nextIndex!==undefined?openPathStep(nextIndex):navigateActivity('roadmap');
     continuation.append(button);
   }
 }

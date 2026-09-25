@@ -15,6 +15,8 @@
   <script src="parsing-next.js" defer></script>
   <script src="parsing-third.js" defer></script>
   <script src="parsing.js" defer></script>
+  <script src="vocabulary-rest.js" defer></script>
+  <script src="word-quizzes.js" defer></script>
   <script src="roadmap.js" defer></script>
 </head>
 <body>
@@ -32,11 +34,13 @@
       <button id="roadmap-nav" aria-pressed="false" aria-controls="roadmap-panel">My learning path</button>
       <button id="study-nav" aria-pressed="true" aria-controls="study-panel"><span>01</span> Study the words</button>
       <button id="quiz-nav" aria-pressed="false" aria-controls="quiz-panel"><span>02</span> Take the quiz</button>
+      <button id="words-nav" aria-pressed="false" aria-controls="words-panel">More word quizzes</button>
       <button id="parse-nav" aria-pressed="false" aria-controls="parse-panel"><span>03</span> Parse the daf</button>
       <p>Learn first. Then put your discoveries to work.</p>
     </nav>
     <section id="study-panel" aria-labelledby="study-title"></section>
     <section id="roadmap-panel" aria-labelledby="roadmap-title" hidden></section>
+    <section id="words-panel" aria-labelledby="words-title" hidden></section>
     <section id="parse-panel" aria-labelledby="parse-title" hidden></section>
     <section id="quiz-panel" aria-label="Word quest quiz" hidden>
     <section class="quest-bar" aria-label="Quiz progress"><div class="quest-label"><span class="path-icon" aria-hidden="true">⚑</span><div><strong id="progress-label">Your first word quest</strong><small id="progress-detail">Every word is a step forward.</small></div></div><div class="progress-track" id="progress-track" role="progressbar" aria-label="Questions completed" aria-valuemin="0" aria-valuemax="11" aria-valuenow="0"><div id="progress-fill"></div></div><div class="score-pill"><span aria-hidden="true">✦</span><strong id="score">0</strong><span>PTS</span></div></section>

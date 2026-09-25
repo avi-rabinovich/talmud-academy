@@ -45,8 +45,8 @@ with sync_playwright() as p:
     page.set_viewport_size({'width': 1440, 'height': 1100})
     page.locator('#start-quiz').click()
     expect(page.locator('#quiz-panel')).to_be_visible()
-    page.locator('.answer').first.wait_for()
-    assert page.locator('.answer').count() == 4
+    page.locator('#answers .answer').first.wait_for()
+    assert page.locator('#answers .answer').count() == 4
     assert page.locator('#next-button').is_disabled()
     assert page.locator('#term').inner_text() == 'ורמינהו'
     artifacts = root / 'test-artifacts'
@@ -57,11 +57,11 @@ with sync_playwright() as p:
     # Wrong answers yield zero; correct answers yield exactly ten.
     for i, answer in enumerate(correct_answers):
         chosen = (answer + 1) % 4 if i == 0 else answer
-        page.locator('.answer').nth(chosen).click()
+        page.locator('#answers .answer').nth(chosen).click()
         page.locator('#next-button').click()
         assert page.locator('#score').inner_text() == str(i * 10)
-        assert page.locator('.answer:disabled').count() == 4
-        assert page.locator('.answer.correct').count() == 1
+        assert page.locator('#answers .answer:disabled').count() == 4
+        assert page.locator('#answers .answer.correct').count() == 1
         if i == 1:
             # Study visits and browser Back preserve the checked answer and points.
             page.locator('#study-nav').click()
@@ -69,7 +69,7 @@ with sync_playwright() as p:
             page.go_back()
             expect(page.locator('#quiz-panel')).to_be_visible()
             assert page.locator('#score').inner_text() == '10'
-            assert page.locator('.answer:disabled').count() == 4
+            assert page.locator('#answers .answer:disabled').count() == 4
             assert page.locator('#feedback').is_visible()
         # Calling the scoring function again must not award duplicate points.
         page.evaluate('checkAnswer()')
@@ -83,12 +83,12 @@ with sync_playwright() as p:
     page.get_by_role('button', name='Practise missed questions').click()
     assert page.locator('#question-number').inner_text() == 'PRACTICE 01 / 1'
     # Repeated mistakes remain eligible for practice without affecting points.
-    page.locator('.answer').nth(0).click()
+    page.locator('#answers .answer').nth(0).click()
     page.locator('#next-button').click()
     page.locator('#next-button').click()
     assert page.locator('#score').inner_text() == '100'
     page.get_by_role('button', name='Practise missed questions').click()
-    page.locator('.answer').nth(correct_answers[0]).click()
+    page.locator('#answers .answer').nth(correct_answers[0]).click()
     page.locator('#next-button').click()
     assert page.locator('#score').inner_text() == '110'
     page.locator('#next-button').click()
@@ -102,7 +102,7 @@ with sync_playwright() as p:
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
     page.screenshot(path=str(artifacts / 'mobile.png'), full_page=True)
     # Native buttons support keyboard selection and submission.
-    page.locator('.answer').nth(1).focus()
+    page.locator('#answers .answer').nth(1).focus()
     page.keyboard.press('Enter')
     page.locator('#next-button').focus()
     page.keyboard.press('Enter')
@@ -262,14 +262,14 @@ with sync_playwright() as p:
     # Roadmap, durable progress, replay without point farming, and resume.
     page.locator('#roadmap-nav').click()
     expect(page.locator('#roadmap-panel')).to_be_visible()
-    expect(page.locator('.path-card')).to_have_count(5)
+    expect(page.locator('.path-card')).to_have_count(8)
     expect(page.locator('.path-card.done')).to_have_count(5)
     expect(page.locator('.path-points strong')).to_have_text('200')
     page.reload()
     expect(page.locator('#roadmap-panel')).to_be_visible()
     expect(page.locator('.path-card.done')).to_have_count(5)
     expect(page.locator('.path-points strong')).to_have_text('200')
-    page.locator('.path-card').nth(4).get_by_role('button').click()
+    page.locator('.path-card[data-path-index="4"]').get_by_role('button').click()
     expect(page.locator('#parse-panel')).to_be_visible()
     assert page.locator('#parse-quiz-choice').input_value() == '2'
     select_range(0, third_steps[0][1])
